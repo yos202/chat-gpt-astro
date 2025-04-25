@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <title>צ'אט GPT</title>
+  <style>
+    body { font-family: Arial; direction: rtl; padding: 20px; max-width: 600px; margin: auto; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px; }
+    .user { color: blue; margin: 5px 0; }
+    .bot { color: green; margin: 5px 0; }
+    input, button { padding: 8px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>צ'אט GPT</h2>
+  <div id="chat"></div>
+  <form id="form">
+    <input id="message" placeholder="כתוב הודעה..." style="width: 75%;" required />
+    <button>שלח</button>
+  </form>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('form');
+    const messageInput = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = messageInput.value;
+      chat.innerHTML += `<div class="user"><strong>אתה:</strong> ${msg}</div>`;
+      messageInput.value = '';
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+
+      const data = await res.json();
+      chat.innerHTML += `<div class="bot"><strong>GPT:</strong> ${data.reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    });
+  </script>
+</body>
+</html>
